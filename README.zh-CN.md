@@ -25,6 +25,10 @@
 - Awesome GPT-4o Image Prompts
 - YouMind GPT Image 2
 - YouMind Nano Banana Pro
+- Ecommerce GPT Image Prompts
+- KeRo 电商视觉
+
+Ecommerce 同时收录整套视觉方案和独立单图变体，优先使用上游中文标题；成图只作为封面，明确标注的编辑前原图才作为参考图。KeRo 收录电商视觉、产品广告分镜以及电商工作流的完整提示词代码块，排除无关文案、翻译、写真、生日涂鸦和贴纸。KeRo 内容仍采用 CC BY-NC 4.0，记录说明与 [NOTICE.md](NOTICE.md) 中保留署名和许可信息。
 
 来源配置位于 `sources.json`。每个来源都有最低条目数要求；任一来源抓取失败、解析失败、格式校验失败或条目数异常时，整个同步会失败，并保留上一版有效的 `dist` 数据。
 

@@ -53,6 +53,10 @@ Source definitions live in `sources.json`.
 | `awesome-gpt4o-image-prompts` | Awesome GPT-4o Image Prompts | Set by the adapter |
 | `youmind-gpt-image-2` | YouMind GPT Image 2 | `gpt-image-2` |
 | `youmind-nano-banana-pro` | YouMind Nano Banana Pro | `nano-banana-pro` |
+| `ecommerce-gpt-image-prompts` | Ecommerce GPT Image Prompts | `gpt-image-2` |
+| `kero-ecommerce-prompts` | KeRo e-commerce visuals | Unspecified |
+
+The Ecommerce adapter includes both collection-level campaign prompts and standalone variants, preferring upstream Chinese titles. Preview images are covers; only explicit before/edit images are references. KeRo includes e-commerce visual prompts, product advertising storyboards, and the full prompt blocks from e-commerce workflows; unrelated copywriting, translation, portraits, birthday drawings, and stickers are excluded. KeRo content remains CC BY-NC 4.0; attribution and licensing notes are included in each record's description and in [NOTICE.md](NOTICE.md).
 
 Each source declares a minimum expected item count. A failed request, parse error, schema violation, or unexpectedly small result fails the complete sync and preserves the last valid `dist` output.
 

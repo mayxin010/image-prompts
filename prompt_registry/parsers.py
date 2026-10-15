@@ -4,7 +4,7 @@ import json
 import re
 from collections.abc import Callable, Iterable
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 from markdown_it import MarkdownIt
@@ -183,6 +183,93 @@ def parse_youmind(source: Source, payload: bytes) -> list[dict[str, Any]]:
                 source_url=item_url,
                 created_at=published_date(tokens),
                 image_model=source.model,
+            )
+        )
+    return deduplicate(result)
+
+
+def parse_ecommerce_json(source: Source, payload: bytes) -> list[dict[str, Any]]:
+    data = json.loads(decode(payload))
+    if not isinstance(data, dict) or not isinstance(data.get("prompts"), list):
+        raise ValueError(f"{source.id} must contain a prompts array")
+    result = []
+    raw_root = urljoin(source.url, "../")
+    for item in data["prompts"]:
+        translation = item.get("translations", {}).get("zh", {})
+        title = translation.get("title") or item["title"]
+        description = translation.get("description") or item.get("description", "")
+        mode = {"text-to-image": "generate", "product-edit": "edit"}[item["mode"]]
+        variants = item["variants"]
+        for variant in [None, *variants]:
+            record = variant if variant is not None else item
+            sample = record.get("sample", {})
+            reference = absolute_url(raw_root, sample.get("before"))
+            result.append(
+                make_prompt(
+                    source,
+                    raw_id=f"{item['id']}:{variant['id']}" if variant is not None else f"{item['id']}:set",
+                    title=f"{title} · {variant['title']}" if variant is not None else f"{title} · 套图方案",
+                    prompt=record["prompt"],
+                    description="\n\n".join(filter(None, [
+                        description,
+                        item.get("inputRequirements", {}).get("instructions", ""),
+                        f"提示词许可：{item['license']}；{source.homepage}/blob/main/LICENSE。仅作格式整理，正文未改写。",
+                        f"预览图许可：{sample['license']}" if sample.get("license") else "",
+                    ])),
+                    cover_url=absolute_url(raw_root, sample.get("after")),
+                    reference_image_urls=[reference] if reference else [],
+                    tags=[
+                        "电商", "产品图", "单图" if variant is not None else "套图",
+                        item.get("category"), record.get("useCase"),
+                        *array(item.get("useCases")), *array(item.get("styles")),
+                        *array(record.get("platforms")), item["license"],
+                    ],
+                    author=item.get("author", {}).get("name"),
+                    source_url=f"{source.homepage}/blob/main/catalog/{item['id']}-{item['slug']}.md",
+                    created_at=item.get("publishedAt"),
+                    image_mode=mode,
+                    image_model=item.get("model"),
+                    image_size=record.get("aspectRatio", ""),
+                )
+            )
+    return deduplicate(result)
+
+
+def parse_kero_json(source: Source, payload: bytes) -> list[dict[str, Any]]:
+    data = json.loads(decode(payload))
+    if not isinstance(data, dict) or not isinstance(data.get("prompts"), list) or not isinstance(data.get("workflows"), list):
+        raise ValueError(f"{source.id} must contain prompts and workflows arrays")
+    result = []
+    raw_root = urljoin(source.url, "../")
+    for item in [*data["prompts"], *data["workflows"]]:
+        category = item.get("category")
+        tags = array(item.get("tags"))
+        if not (
+            category == "ecommerce-visual"
+            or category == "ecommerce-poster" and {"电商", "产品", "海报"}.intersection(tags)
+            or item.get("id") == "product-ad-4x4-storyboard"
+        ):
+            continue
+        origin = item["source"]
+        source_url = f"{source.homepage}/blob/main/{origin['path']}"
+        if origin.get("anchor"):
+            source_url += f"#{origin['anchor']}"
+        images = [absolute_url(raw_root, image) for image in array(item.get("images"))]
+        result.append(
+            make_prompt(
+                source,
+                raw_id=item["id"],
+                title=item["title"],
+                prompt=item["prompt"],
+                description="\n\n".join(filter(None, [
+                    item.get("summary"),
+                    "工作流提示词：先用于文本模型规划，再执行生图。" if item.get("type") == "workflow" else "",
+                    "许可：CC BY-NC 4.0（https://creativecommons.org/licenses/by-nc/4.0/）。署名 KeRo AI Prompt Library / Youks7；仅作格式整理，正文未改写。",
+                ])),
+                cover_url=images[0] if images else "",
+                tags=["电商", "电商工作流" if item.get("type") == "workflow" else "电商视觉", *tags, *array(item.get("models")), "CC BY-NC 4.0"],
+                author="KeRo AI Prompt Library / Youks7",
+                source_url=source_url,
             )
         )
     return deduplicate(result)
@@ -395,4 +482,6 @@ PARSERS: dict[str, Callable[[Source, bytes], list[dict[str, Any]]]] = {
     "awesome-gpt-image-markdown": parse_awesome_gpt_image,
     "awesome-gpt4o-markdown": parse_awesome_gpt4o,
     "youmind-markdown": parse_youmind,
+    "ecommerce-json": parse_ecommerce_json,
+    "kero-json": parse_kero_json,
 }

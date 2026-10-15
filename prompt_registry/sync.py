@@ -9,12 +9,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin
 
 import httpx
 from jsonschema import Draft202012Validator, FormatChecker
 
 from .models import Source
-from .parsers import parse_source
+from .parsers import MARKDOWN, parse_source
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -83,12 +84,28 @@ def fetch_all(sources: list[Source]) -> dict[str, list[dict[str, Any]]]:
 
 
 def fetch_one(client: httpx.Client, source: Source) -> list[dict[str, Any]]:
-    response = client.get(source.url)
+    payload = fetch_payload(client, source.url)
+    if source.adapter == "kero-json":
+        data = json.loads(payload.decode("utf-8-sig"))
+        for item in data["workflows"]:
+            if item.get("category") != "ecommerce-visual":
+                continue
+            document = fetch_payload(client, urljoin(source.url, "../" + item["contentPath"]))
+            fences = [token.content.strip() for token in MARKDOWN.parse(document.decode("utf-8-sig")) if token.type == "fence"]
+            if not fences:
+                raise ValueError(f"{source.id}: workflow {item['id']} has no prompt blocks")
+            item["prompt"] = "\n\n".join(fences)
+        payload = json.dumps(data, ensure_ascii=False).encode("utf-8")
+    return parse_source(source, payload)
+
+
+def fetch_payload(client: httpx.Client, url: str) -> bytes:
+    response = client.get(url)
     response.raise_for_status()
     payload = response.content
     if len(payload) > MAX_SOURCE_BYTES:
         raise ValueError(f"response exceeds {MAX_SOURCE_BYTES // 1024 // 1024} MiB")
-    return parse_source(source, payload)
+    return payload
 
 
 def write_registry(

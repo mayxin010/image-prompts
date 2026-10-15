@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-14T08:39:04+00:00",
-  "registryHash": "8b742ecfe306e48c4c15a633aa2e1ad7f4f2c2c7011c7bee6d766603e379702a",
-  "total": 1742,
+  "generatedAt": "2026-10-15T02:21:23+00:00",
+  "registryHash": "6ff67c43b2ee6803e7835197f08611c55beb93af6360e8d51ea9b46d20e5a56a",
+  "total": 2126,
   "promptsPath": "prompts.json",
   "sources": [
     {
@@ -67,6 +67,24 @@
       "count": 129,
       "path": "sources/youmind-nano-banana-pro.json",
       "sha256": "49eac77a865cc67f2b62be6578c529b0a541d281170ae0045b5cf7e466aab721"
+    },
+    {
+      "id": "ecommerce-gpt-image-prompts",
+      "name": "Ecommerce GPT Image Prompts",
+      "homepage": "https://github.com/ecomimagelab/ecommerce-gpt-image-prompts",
+      "upstreamUrl": "https://raw.githubusercontent.com/ecomimagelab/ecommerce-gpt-image-prompts/main/data/prompts.json",
+      "count": 358,
+      "path": "sources/ecommerce-gpt-image-prompts.json",
+      "sha256": "5faefcc890a18b15d293a5146616e3f1cce15f3231b813146f2b9a52702513ca"
+    },
+    {
+      "id": "kero-ecommerce-prompts",
+      "name": "KeRo 电商视觉",
+      "homepage": "https://github.com/Youks7/AI-Prompt-Library",
+      "upstreamUrl": "https://raw.githubusercontent.com/Youks7/AI-Prompt-Library/main/data/catalog.json",
+      "count": 26,
+      "path": "sources/kero-ecommerce-prompts.json",
+      "sha256": "1135021efb1c4a14a254ef44cd4e90bd6e51ca93b73abb93e60b8ba00e189c04"
     }
   ]
 }

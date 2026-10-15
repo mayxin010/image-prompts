@@ -57,5 +57,20 @@
     "homepage": "https://github.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts",
     "minimumItems": 100,
     "model": "nano-banana-pro"
+  },
+  {
+    "id": "ecommerce-gpt-image-prompts",
+    "name": "Ecommerce GPT Image Prompts",
+    "adapter": "ecommerce-json",
+    "url": "https://raw.githubusercontent.com/ecomimagelab/ecommerce-gpt-image-prompts/main/data/prompts.json",
+    "homepage": "https://github.com/ecomimagelab/ecommerce-gpt-image-prompts",
+    "model": "gpt-image-2"
+  },
+  {
+    "id": "kero-ecommerce-prompts",
+    "name": "KeRo 电商视觉",
+    "adapter": "kero-json",
+    "url": "https://raw.githubusercontent.com/Youks7/AI-Prompt-Library/main/data/catalog.json",
+    "homepage": "https://github.com/Youks7/AI-Prompt-Library"
   }
 ]
