@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-12T11:26:00+00:00",
-  "registryHash": "a092c7800484c9fe39ba6efe39d0f86a0520d53e766b7a91aa198ca34bd21cfe",
+  "generatedAt": "2026-11-13T11:09:27+00:00",
+  "registryHash": "8718344e2151ae0d6b686f53cda3691c43298fc6dda4516d387d6e68f72a64c4",
   "total": 2126,
   "promptsPath": "prompts.json",
   "sources": [
@@ -66,7 +66,7 @@
       "upstreamUrl": "https://raw.githubusercontent.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts/main/README_zh.md",
       "count": 129,
       "path": "sources/youmind-nano-banana-pro.json",
-      "sha256": "8eb637aab1e88fb72d4ae2dfbc34a5722e495d95447a652a299392b4382f4130"
+      "sha256": "2f267e832c79becfcef93836969b33fdee28761463b924b3f9483a03e66543af"
     },
     {
       "id": "ecommerce-gpt-image-prompts",
